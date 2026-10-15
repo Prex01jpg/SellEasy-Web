@@ -70,7 +70,7 @@ textarea{min-height:105px;resize:vertical}.pill{display:inline-block;background:
 <header><h1>SellEasy ✨</h1><p>Your small-business marketing assistant</p></header>
 <main>
 <section id="home" class="screen active">
-<h2>Good to see you, seller 💜</h2>
+<h2 id="welcomeGreeting">Good to see you 💜</h2>
 <div class="grid">
 <div class="card"><div class="muted">Products</div><div class="stat" id="productCount">0</div></div>
 <div class="card"><div class="muted">Saved content</div><div class="stat" id="contentCount">0</div></div>
@@ -532,6 +532,8 @@ onAuthStateChanged(auth, async (user)=>{
   if(user){
     authScreen.style.display='none'; appShell.style.display='block';
     document.getElementById('accountEmail').textContent=user.email || '';
+    const welcomeName=(user.displayName||'seller').trim();
+    document.getElementById('welcomeGreeting').textContent=`Hi ${welcomeName} 👋🏽`;
     await touchUserProfile(user,'app_open');
     trackEvent('app_open');
     trackFunnel('opened');
