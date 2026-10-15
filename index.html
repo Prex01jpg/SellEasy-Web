@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#6c4cff">
+<title>SellEasy 2.0 — Latest</title>
+<style>
+:root{--p:#6c4cff;--bg:#f7f7fb;--card:#fff;--text:#171727;--muted:#77758a;--line:#e8e7f0;--ok:#16834b}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--text)}
+#splashScreen{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--p);color:#fff;text-align:center}
+.splash-inner{display:flex;flex-direction:column;align-items:center;justify-content:center}
+.splash-mark{font-size:78px;line-height:1;font-weight:950;letter-spacing:-5px;margin-bottom:18px}
+.splash-name{font-size:34px;font-weight:900;letter-spacing:-1px}
+.splash-tagline{margin-top:8px;font-size:15px;line-height:1.55;opacity:.92;letter-spacing:.2px}
+.splash-tagline span{display:block}
+header{padding:18px 18px 8px;background:linear-gradient(135deg,#6c4cff,#9b7cff);color:#fff;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:25px}header p{margin:3px 0 8px;opacity:.9;font-size:13px}
+main{max-width:760px;margin:auto;padding:14px 14px 90px}.screen{display:none}.screen.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:15px;margin:10px 0;box-shadow:0 3px 14px #20154b0a}
+h2{margin:4px 0 10px;font-size:21px}h3{margin:4px 0 7px;font-size:16px}.muted{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+button,.btn{border:0;border-radius:12px;padding:12px 13px;background:var(--p);color:#fff;font-weight:700;cursor:pointer}
+button.secondary{background:#eeeafc;color:#4b35bf}.small{padding:8px 10px;font-size:12px}
+input,textarea,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;margin:5px 0 10px;background:#fff;font:inherit}
+textarea{min-height:105px;resize:vertical}.pill{display:inline-block;background:#eeeafc;color:#513dc2;border-radius:99px;padding:5px 9px;font-size:11px;font-weight:700;margin:3px}
+.stat{font-size:24px;font-weight:800}.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 5px;z-index:10}.nav button{background:transparent;color:#6e6b7d;padding:7px 5px;font-size:11px}.nav button.active{color:var(--p)}
+.row{display:flex;gap:8px;align-items:center;justify-content:space-between}.row>*{min-width:0}.contentbox{white-space:pre-wrap;background:#faf9ff;border:1px dashed #cfc8ff;border-radius:12px;padding:12px;font-size:14px}
+.notice{padding:10px;border-radius:12px;background:#fff8df;color:#735d00;font-size:12px}
+#authScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px;background:linear-gradient(135deg,#6c4cff,#9b7cff)}
+.auth-card{width:100%;max-width:430px;background:#fff;border-radius:24px;padding:24px;box-shadow:0 12px 40px #24135a33}
+.auth-logo{font-size:30px;font-weight:900;margin-bottom:4px}.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0}.auth-tabs button{background:#eeeafc;color:#4b35bf}.auth-tabs button.active{background:var(--p);color:#fff}.auth-error{background:#fff0f0;color:#a32121;padding:10px;border-radius:10px;font-size:13px;display:none;margin:8px 0}.auth-note{font-size:12px;color:var(--muted);line-height:1.5}
+.feedback-choice{display:grid;grid-template-columns:1fr 1fr;gap:8px}.feedback-choice button{background:#f1efff;color:#4b35bf}.feedback-choice button.selected{background:var(--p);color:#fff}.admin-only{display:none}.admin-stat{background:#faf9ff;border:1px solid var(--line);border-radius:14px;padding:12px}.feedback-item{border-left:4px solid var(--p)}
+</style>
+</head>
+<body>
+<section id="splashScreen" aria-label="SellEasy splash screen">
+  <div class="splash-inner">
+    <div class="splash-mark">SE</div>
+    <div class="splash-name">SellEasy</div>
+    <div class="splash-tagline"><span>Sell smarter</span><span>Market easier</span></div>
+  </div>
+</section>
+<section id="authScreen">
+  <div class="auth-card">
+    <div class="auth-logo">SellEasy ✨</div>
+    <p class="muted">Your small-business marketing assistant</p>
+    <div class="auth-tabs">
+      <button id="loginTab" class="active" onclick="switchAuth('login')">Log in</button>
+      <button id="signupTab" onclick="switchAuth('signup')">Create account</button>
+    </div>
+    <div id="authError" class="auth-error"></div>
+    <div id="loginForm">
+      <label>Email</label><input id="loginEmail" type="email" autocomplete="email" placeholder="you@example.com">
+      <label>Password</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Your password">
+      <button onclick="loginUser()">Log in</button>
+      <button class="secondary" style="width:100%;margin-top:8px" onclick="resetPassword()">Forgot password?</button>
+    </div>
+    <div id="signupForm" style="display:none">
+      <label>Your name</label><input id="signupName" autocomplete="name" placeholder="Your name">
+      <label>Email</label><input id="signupEmail" type="email" autocomplete="email" placeholder="you@example.com">
+      <label>Password</label><input id="signupPassword" type="password" autocomplete="new-password" placeholder="At least 6 characters">
+      <label>Confirm password</label><input id="signupConfirm" type="password" autocomplete="new-password" placeholder="Repeat your password">
+      <button onclick="signupUser()">Create account</button>
+    </div>
+    <p class="auth-note">Your account keeps your SellEasy products, saved content and brand information connected to you.</p>
+  </div>
+</section>
+<div id="appShell" style="display:none">
+<header><h1>SellEasy ✨</h1><p>Your small-business marketing assistant</p></header>
+<main>
+<section id="home" class="screen active">
+<h2>Good to see you, seller 💜</h2>
+<div class="grid">
+<div class="card"><div class="muted">Products</div><div class="stat" id="productCount">0</div></div>
+<div class="card"><div class="muted">Saved content</div><div class="stat" id="contentCount">0</div></div>
+</div>
+<div class="card" id="planCard"><div class="row"><div><div class="muted">My Plan</div><h3 id="planName">🆓 SellEasy Free</h3></div><span class="pill" id="planUsage">20 AI generations remaining</span></div><p class="muted" id="planSummary">20 AI generations · 10 saved products · 20 saved content pieces</p><div style="height:8px;background:#eee;border-radius:99px;overflow:hidden"><div id="planProgress" style="height:100%;width:0%;background:var(--p);transition:width .2s"></div></div><p class="muted" id="planRemaining" style="margin-top:8px">20 AI generations remaining this month</p><button class="secondary" onclick="show('profile')">View My Plan</button></div>
+<div class="card"><h3>What do you want to do?</h3><div class="grid">
+<button onclick="show('create')">✨ Create content</button>
+<button onclick="show('products')">📦 My products</button>
+<button onclick="show('marketing')">💡 Marketing ideas</button>
+<button onclick="show('tools')">🧮 Business tools</button>
+</div></div>
+<div class="card"><h3>Today's selling tip</h3><p class="muted">Don't only post what you sell. Show the problem your product solves, then make it easy for customers to take the next step.</p></div>
+<div class="card"><h3>Help us make SellEasy better 💜</h3><p class="muted">What do you struggle with most in your business?</p><div class="feedback-choice" id="needsChoices"></div><label style="display:block;margin-top:10px">Something else</label><input id="needsOther" placeholder="Tell us in your own words (optional)"><button onclick="submitNeedsFeedback()">Send feedback</button><p id="needsStatus" class="muted"></p></div>
+<div class="card"><h3>Tell us what you wish SellEasy could do</h3><textarea id="generalFeedback" placeholder="What would you like SellEasy to do better, or do at all?"></textarea><button onclick="submitGeneralFeedback()">Send feedback</button><p id="generalStatus" class="muted"></p></div>
+</section>
+
+<section id="create" class="screen">
+<h2>AI Content Studio</h2><p class="muted">Real AI generation is connected to the secure SellEasy backend. Your Gemini API key is never stored in this app.</p>
+<div class="card">
+<label>Choose product</label><select id="productSelect" onchange="fillProduct()"><option value="">Enter product details below</option></select>
+<label>Product name</label><input id="pname" placeholder="e.g. Hair oil">
+<label>Description</label><textarea id="pdesc" placeholder="What is it, who is it for, and why should someone care?"></textarea>
+<label>Price</label><input id="price" placeholder="e.g. ₦8,000">
+<label>Target customer</label><input id="audience" placeholder="e.g. busy young women">
+<label>Content type</label><select id="ctype">
+<option>Instagram caption</option><option>Facebook caption</option><option>WhatsApp sales message</option><option>TikTok script</option><option>Advertisement copy</option><option>Product description</option><option>Customer follow-up</option><option>Product launch</option><option>Discount announcement</option><option>Business bio</option></select>
+<label>Style</label><select id="style"><option>Professional</option><option>Sales-focused</option><option>Casual & friendly</option></select>
+<button onclick="generate()">Generate</button>
+</div>
+<div id="generated" class="card" style="display:none"><div class="row"><h3>Generated content</h3><button class="small secondary" onclick="copyGenerated()">Copy</button></div><div id="output" class="contentbox"></div><br><button class="secondary" onclick="saveContent()">Save to My Content</button></div>
+</section>
+
+<section id="products" class="screen">
+<h2>My Products</h2>
+<div class="card"><input id="newProduct" placeholder="Product name"><input id="newPrice" placeholder="Price"><input id="newCategory" placeholder="Category"><textarea id="newDetails" placeholder="Short product details"></textarea><button onclick="addProduct()">Add product</button></div>
+<div id="productsList"></div>
+</section>
+
+<section id="marketing" class="screen">
+<h2>Marketing Ideas</h2>
+<div class="card"><p class="muted">Tap an idea to use it in the Content Studio.</p><div id="ideas"></div></div>
+<div class="card"><h3>7-Day Content Planner</h3><div id="planner"></div></div>
+</section>
+
+<section id="customers" class="screen">
+<h2>Customer Reply Assistant</h2>
+<div class="card"><label>Paste customer's message</label><textarea id="customerMsg" placeholder="e.g. Can you reduce the price?"></textarea><button onclick="reply()">Create reply</button></div>
+<div id="replyBox" class="card" style="display:none"><div class="contentbox" id="replyOut"></div><br><button class="secondary" onclick="copyText('replyOut')">Copy reply</button></div>
+</section>
+
+<section id="tools" class="screen">
+<h2>Business Tools</h2>
+<div class="grid">
+<div class="card"><h3>Profit</h3><input id="cost" type="number" placeholder="Cost"><input id="sell" type="number" placeholder="Selling price"><button onclick="calcProfit()">Calculate</button><p id="profitOut" class="stat"></p></div>
+<div class="card"><h3>Discount</h3><input id="dprice" type="number" placeholder="Original price"><input id="dpercent" type="number" placeholder="Discount %"><button onclick="calcDiscount()">Calculate</button><p id="discountOut" class="stat"></p></div>
+<div class="card"><h3>Markup</h3><input id="mcost" type="number" placeholder="Cost"><input id="mpercent" type="number" placeholder="Markup %"><button onclick="calcMarkup()">Calculate</button><p id="markupOut" class="stat"></p></div>
+<div class="card"><h3>Break-even</h3><input id="fixed" type="number" placeholder="Fixed costs"><input id="unitcost" type="number" placeholder="Cost/unit"><input id="unitprice" type="number" placeholder="Price/unit"><button onclick="calcBreak()">Calculate</button><p id="breakOut" class="stat"></p></div>
+</div>
+</section>
+
+<section id="feedback" class="screen">
+<h2>Feedback</h2>
+<div class="card"><h3>What do you struggle with most?</h3><p class="muted">Choose the biggest challenge you want SellEasy to help with.</p><div class="feedback-choice" id="needsChoices2"></div><input id="needsOther2" placeholder="Something else (optional)"><button onclick="submitNeedsFeedback('2')">Send feedback</button><p id="needsStatus2" class="muted"></p></div>
+<div class="card"><h3>What do you wish SellEasy could do?</h3><textarea id="generalFeedback2" placeholder="Tell us what you want us to improve or add."></textarea><button onclick="submitGeneralFeedback('2')">Send feedback</button><p id="generalStatus2" class="muted"></p></div>
+</section>
+
+
+<section id="users" class="screen admin-only">
+<h2>User & Analytics Dashboard</h2>
+<p class="muted">Private admin view. Usage analytics are aggregated where possible; account records come from authenticated SellEasy users.</p>
+<div class="grid3">
+  <div class="admin-stat"><div class="muted">Registered users</div><div class="stat" id="userTotal">0</div></div>
+  <div class="admin-stat"><div class="muted">Active recently</div><div class="stat" id="userActive">0</div></div>
+  <div class="admin-stat"><div class="muted">Live now*</div><div class="stat" id="userLive">0</div></div>
+</div>
+<div class="grid3">
+  <div class="admin-stat"><div class="muted">Content saved</div><div class="stat" id="adminSavedTotal">0</div></div>
+  <div class="admin-stat"><div class="muted">Products created</div><div class="stat" id="adminProductsTotal">0</div></div>
+  <div class="admin-stat"><div class="muted">Feedback</div><div class="stat" id="adminFeedbackTotal2">0</div></div>
+</div>
+<div class="card"><h3>User journey</h3><div id="funnelBreakdown" class="muted">Loading…</div></div>
+<div class="card"><h3>Recent users</h3><div class="row"><span class="muted">Refreshes from Firebase</span><button class="small secondary" onclick="loadUserDashboard()">Refresh</button></div><div id="userList"></div></div>
+<p class="muted">* “Live now” means a signed-in user whose SellEasy session reported a heartbeat within the last 2 minutes.</p>
+</section>
+
+<section id="admin" class="screen admin-only">
+<h2>Admin Feedback Dashboard</h2><p class="muted">Private view for SellEasy administrators.</p>
+<div class="grid3"><div class="admin-stat"><div class="muted">Total feedback</div><div class="stat" id="adminTotal">0</div></div><div class="admin-stat"><div class="muted">Need surveys</div><div class="stat" id="adminNeeds">0</div></div><div class="admin-stat"><div class="muted">Suggestions</div><div class="stat" id="adminSuggestions">0</div></div></div>
+<div class="card"><h3>Top business struggles</h3><div id="adminNeedsBreakdown" class="muted">No data yet.</div></div>
+<div class="card"><h3>Feature usefulness</h3><div id="adminUsefulness" class="muted">No data yet.</div></div>
+<div class="card"><div class="row"><h3>Recent feedback</h3><button class="small secondary" onclick="loadAdminDashboard()">Refresh</button></div><div id="adminFeedbackList"></div></div>
+</section>
+
+<section id="content" class="screen">
+<h2>My Content</h2><input id="searchContent" oninput="renderContent()" placeholder="Search saved content..."><div id="contentList"></div>
+</section>
+
+<section id="profile" class="screen">
+<h2>My Plan & Brand Kit</h2>
+<div class="card" id="myPlanPanel">
+  <div class="row"><div><span class="pill" id="profilePlanBadge">FREE</span><h3 id="profilePlanName">🆓 SellEasy Free</h3></div><b id="profilePlanPrice">₦0</b></div>
+  <p class="muted" id="profilePlanDetails">20 AI generations/month · 10 saved products · 20 saved content pieces</p>
+  <div class="grid">
+    <div><div class="muted">AI generations</div><div class="stat" id="profileAiRemaining">20/20</div></div>
+    <div><div class="muted">Saved products</div><div class="stat" id="profileProductsRemaining">0/10</div></div>
+    <div><div class="muted">Saved content</div><div class="stat" id="profileContentRemaining">0/20</div></div>
+  </div>
+  <div id="upgradeBox" class="notice" style="margin-top:12px">✨ Want more? Upgrade to Pro for <b>100 AI generations every month</b>, unlimited saved products/content and advanced tools.</div>
+  <button id="upgradeButton" onclick="showUpgradeMessage()">Upgrade to Pro — ₦2,000/month</button><button id="managePlanButton" class="secondary" style="display:none;margin-top:8px" onclick="alert('Subscription management will appear here after the secure payment processor is connected.')">Manage Subscription</button>
+</div>
+<h2 style="margin-top:18px">Brand Kit</h2><div class="card">
+<label>Business name</label><input id="biz" placeholder="Your business name">
+<label>Business description</label><textarea id="bizdesc" placeholder="What do you sell?"></textarea>
+<label>Target audience</label><input id="bizaudience" placeholder="Who do you serve?">
+<label>Tone</label><select id="tone"><option>Professional</option><option>Friendly</option><option>Bold</option><option>Simple</option></select>
+<label>Contact information</label><input id="contact" placeholder="Phone, email, page, etc.">
+<button onclick="saveBrand()">Save Brand Kit</button>
+<p id="brandSaved" class="muted"></p>
+<div class="card" style="margin:12px 0 0">
+<h3>My account</h3><p id="accountEmail" class="muted"></p><button class="secondary" onclick="logoutUser()">Log out</button>
+</div>
+</div>
+<div class="card"><h3>Quick feedback</h3><p class="muted">Have an idea or something that did not work well?</p><button class="secondary" onclick="show('feedback')">Open feedback</button></div>
+<div class="notice">SellEasy uses Firebase for your account and cloud data, and analytics to improve the app. No location tracking is used. No Gemini API key is stored in this app. Advertising is intentionally not enabled in this version.</div>
+</section>
+</main>
+
+<nav class="nav">
+<button onclick="show('home')" data-s="home">⌂<br>Home</button>
+<button onclick="show('create')" data-s="create">✦<br>Create</button>
+<button onclick="show('products')" data-s="products">▣<br>Products</button>
+<button onclick="show('marketing')" data-s="marketing">💡<br>Market</button>
+<button onclick="show('content')" data-s="content">♡<br>Saved</button>
+<button onclick="show('profile')" data-s="profile">○<br>Profile</button>
+<button id="usersNav" class="admin-only" onclick="show('users')" data-s="users">👥<br>Users</button>
+<button id="adminNav" class="admin-only" onclick="show('admin')" data-s="admin">▤<br>Admin</button>
+</nav>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
+import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-analytics.js";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, updateProfile } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, collection, getDocs, addDoc, deleteDoc, query, orderBy, limit, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCCfhwt43RWuXQKRCtyy-WKeKvxfjTfIwo",
+  authDomain: "selleasy-c9182.firebaseapp.com",
+  projectId: "selleasy-c9182",
+  storageBucket: "selleasy-c9182.firebasestorage.app",
+  messagingSenderId: "1028268930886",
+  appId: "1:1028268930886:web:3100edd796403b242b5747"
+};
+const firebaseApp = initializeApp(firebaseConfig);
+const BACKEND_URL = 'https://selleasy-ai-backend.onrender.com';
+const GENERATE_ENDPOINT = `${BACKEND_URL}/api/generate`;
+const analytics = getAnalytics(firebaseApp);
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
+let splashDone=false;
+setTimeout(()=>{
+  splashDone=true;
+  const splash=document.getElementById('splashScreen');
+  if(splash) splash.style.display='none';
+},1800);
+
+const get=(k,d=[])=>JSON.parse(localStorage.getItem(k)||JSON.stringify(d));
+const set=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+let products=[], saved=[], brand={}, lastGenerated='', currentUser=null;
+let dataReady=false;
+const PLAN_CONFIG={free:{name:'SellEasy Free',badge:'FREE',price:'₦0',aiLimit:20,productLimit:10,savedLimit:20},pro:{name:'SellEasy Pro',badge:'PRO',price:'₦2,000/month',aiLimit:100,productLimit:Infinity,savedLimit:Infinity}};
+let accountPlan='free', aiUsed=0, usageMonth='';
+function currentMonth(){return new Date().toISOString().slice(0,7)}
+function getPlan(){return PLAN_CONFIG[accountPlan]||PLAN_CONFIG.free}
+function loadPlanData(data={}){accountPlan=data.plan==='pro'?'pro':'free';usageMonth=data.aiUsageMonth||currentMonth();aiUsed=Number(data.aiUsed||0);if(usageMonth!==currentMonth()){usageMonth=currentMonth();aiUsed=0;}renderPlan();}
+function renderPlan(){const plan=getPlan(),remaining=Math.max(0,plan.aiLimit-aiUsed),pct=Math.min(100,(aiUsed/plan.aiLimit)*100);
+const pn=document.getElementById('planName');if(pn)pn.textContent=(accountPlan==='pro'?'👑 ':'🆓 ')+plan.name;
+const pu=document.getElementById('planUsage');if(pu)pu.textContent=`${remaining} AI generations remaining`;
+const ps=document.getElementById('planSummary');if(ps)ps.textContent=accountPlan==='pro'?'100 AI generations · Unlimited saved products · Unlimited saved content':'20 AI generations · 10 saved products · 20 saved content pieces';
+const pp=document.getElementById('planProgress');if(pp)pp.style.width=`${pct}%`;
+const pr=document.getElementById('planRemaining');if(pr)pr.textContent=`${remaining} AI generations remaining this month`;
+const badge=document.getElementById('profilePlanBadge');if(badge)badge.textContent=plan.badge;
+const name=document.getElementById('profilePlanName');if(name)name.textContent=(accountPlan==='pro'?'👑 ':'🆓 ')+plan.name;
+const price=document.getElementById('profilePlanPrice');if(price)price.textContent=plan.price;
+const details=document.getElementById('profilePlanDetails');if(details)details.textContent=accountPlan==='pro'?'100 AI generations/month · Unlimited saved products · Unlimited saved content':'20 AI generations/month · 10 saved products · 20 saved content pieces';
+const ar=document.getElementById('profileAiRemaining');if(ar)ar.textContent=`${remaining}/${plan.aiLimit}`;
+const ppr=document.getElementById('profileProductsRemaining');if(ppr)ppr.textContent=plan.productLimit===Infinity?`${products.length} / ∞`:`${products.length}/${plan.productLimit}`;
+const scr=document.getElementById('profileContentRemaining');if(scr)scr.textContent=plan.savedLimit===Infinity?`${saved.length} / ∞`:`${saved.length}/${plan.savedLimit}`;
+const box=document.getElementById('upgradeBox');if(box)box.style.display=accountPlan==='pro'?'none':'block';
+const btn=document.getElementById('upgradeButton');if(btn)btn.style.display=accountPlan==='pro'?'none':'block';const mb=document.getElementById('managePlanButton');if(mb)mb.style.display=accountPlan==='pro'?'block':'none';}
+async function persistPlan(){if(!currentUser)return;try{await setDoc(doc(db,'users',currentUser.uid),{plan:accountPlan,aiUsed,aiUsageMonth:usageMonth},{merge:true});}catch(e){console.error(e)}}
+function showUpgradeMessage(){alert('SellEasy Pro will be available here when the secure payment system is connected. Pro: ₦2,000/month · 100 AI generations/month · unlimited saved products and content.')}
+function canUseAI(){const plan=getPlan();if(aiUsed>=plan.aiLimit){alert(`🎉 You’ve used all ${plan.aiLimit} AI generations for this month! Upgrade to SellEasy Pro for 100 AI generations every month plus unlimited saved content and advanced tools.`);return false;}return true}
+
+
+
+function trackEvent(name, params={}) {
+  try { logEvent(analytics, name, params); } catch(e) {}
+}
+async function touchUserProfile(user=currentUser, eventName='app_open') {
+  if(!user) return;
+  try {
+    const ref=doc(db,'users',user.uid);
+    await setDoc(ref,{
+      name:user.displayName||'',
+      email:user.email||'',
+      lastActiveAt:serverTimestamp(),
+      lastActiveIso:new Date().toISOString(),
+      lastEvent:eventName,
+      sessionCount:increment(1)
+    },{merge:true});
+  } catch(e) {}
+}
+async function trackUsage(feature,eventName) {
+  trackEvent(eventName,{feature});
+  if(!currentUser) return;
+  try {
+    await setDoc(doc(db,'users',currentUser.uid),{
+      lastActiveAt:serverTimestamp(),
+      lastActiveIso:new Date().toISOString(),
+      lastEvent:eventName,
+      [`usage.${feature}`]:increment(1)
+    },{merge:true});
+  } catch(e) {}
+}
+let presenceTimer=null;
+async function updatePresence() {
+  if(!currentUser) return;
+  try {
+    await setDoc(doc(db,'presence',currentUser.uid),{
+      uid:currentUser.uid,
+      lastSeenAt:serverTimestamp(),
+      lastSeenIso:new Date().toISOString()
+    },{merge:true});
+  } catch(e) {}
+}
+function startPresence() {
+  updatePresence();
+  if(presenceTimer) clearInterval(presenceTimer);
+  presenceTimer=setInterval(updatePresence,60000);
+}
+function stopPresence() {
+  if(presenceTimer) clearInterval(presenceTimer);
+  presenceTimer=null;
+}
+async function trackFunnel(step) {
+  trackEvent('funnel_step',{step});
+  if(!currentUser) return;
+  try {
+    await setDoc(doc(db,'users',currentUser.uid),{
+      [`funnel.${step}`]:true,
+      lastFunnelStep:step,
+      lastActiveAt:serverTimestamp()
+    },{merge:true});
+  } catch(e) {}
+}
+
+function userKey(k){ return currentUser ? `selleasy_${currentUser.uid}_${k}` : `selleasy_guest_${k}`; }
+function showAuthError(message){ const el=document.getElementById('authError'); el.textContent=message; el.style.display='block'; }
+function clearAuthError(){ const el=document.getElementById('authError'); el.textContent=''; el.style.display='none'; }
+function friendlyAuthError(err){
+  const map={
+    'auth/invalid-credential':'Email or password is incorrect.',
+    'auth/invalid-email':'Please enter a valid email address.',
+    'auth/email-already-in-use':'An account already exists with this email.',
+    'auth/weak-password':'Password should be at least 6 characters.',
+    'auth/too-many-requests':'Too many attempts. Please try again later.',
+    'auth/network-request-failed':'Network problem. Check your internet connection and try again.'
+  };
+  return map[err?.code] || err?.message || 'Something went wrong. Please try again.';
+}
+function switchAuth(mode){
+  clearAuthError();
+  const login=mode==='login';
+  document.getElementById('loginForm').style.display=login?'block':'none';
+  document.getElementById('signupForm').style.display=login?'none':'block';
+  document.getElementById('loginTab').classList.toggle('active',login);
+  document.getElementById('signupTab').classList.toggle('active',!login);
+}
+async function loginUser(){
+  clearAuthError();
+  const email=document.getElementById('loginEmail').value.trim();
+  const password=document.getElementById('loginPassword').value;
+  if(!email||!password){showAuthError('Enter your email and password.');return;}
+  try{ await signInWithEmailAndPassword(auth,email,password);
+    trackEvent('login',{method:'email'}); }catch(err){showAuthError(friendlyAuthError(err));}
+}
+async function signupUser(){
+  clearAuthError();
+  const name=document.getElementById('signupName').value.trim();
+  const email=document.getElementById('signupEmail').value.trim();
+  const password=document.getElementById('signupPassword').value;
+  const confirm=document.getElementById('signupConfirm').value;
+  if(!name||!email||!password){showAuthError('Please complete all fields.');return;}
+  if(password.length<6){showAuthError('Password should be at least 6 characters.');return;}
+  if(password!==confirm){showAuthError('The passwords do not match.');return;}
+  try{
+    const cred=await createUserWithEmailAndPassword(auth,email,password);
+    await updateProfile(cred.user,{displayName:name});
+    await setDoc(doc(db,'users',cred.user.uid),{name,email,createdAt:new Date().toISOString(),funnel:{signup:true},sessionCount:0},{merge:true});
+    trackFunnel('signup'); trackEvent('sign_up',{method:'email'});
+  }catch(err){showAuthError(friendlyAuthError(err));}
+}
+async function resetPassword(){
+  clearAuthError();
+  const email=document.getElementById('loginEmail').value.trim();
+  if(!email){showAuthError('Enter your email first, then tap Forgot password.');return;}
+  try{await sendPasswordResetEmail(auth,email);alert('Password reset email sent. Check your inbox.');}catch(err){showAuthError(friendlyAuthError(err));}
+}
+async function logoutUser(){ trackEvent('logout'); stopPresence(); await signOut(auth); }
+async function loadCloudData(){
+  products=[]; saved=[]; brand={};
+  try{
+    const uref=doc(db,'users',currentUser.uid);
+    const u=await getDoc(uref);
+    if(u.exists()){const ud=u.data();brand=ud.brand||{};loadPlanData(ud);}else{loadPlanData({});}
+    const ps=await getDocs(collection(uref,'products'));
+    ps.forEach(d=>products.push({id:d.id,...d.data()}));
+    const cs=await getDocs(collection(uref,'content'));
+    cs.forEach(d=>saved.push({id:d.id,...d.data()}));
+    set(userKey('products'),products);set(userKey('saved'),saved);set(userKey('brand'),brand);
+  }catch(err){
+    products=get(userKey('products')); saved=get(userKey('saved')); brand=get(userKey('brand'),{});
+  }
+  dataReady=true; loadBrand(); updateStats(); renderProducts(); renderContent(); renderMarketing(); renderPlan();
+  try{await setDoc(doc(db,'users',currentUser.uid),{productCount:products.length,savedCount:saved.length,lastActiveAt:serverTimestamp(),lastActiveIso:new Date().toISOString(),funnel:{returned:true}},{merge:true});}catch(e){}
+}
+async function saveCloudProduct(p){ try{const ref=doc(db,'users',currentUser.uid,'products',p.id); await setDoc(ref,p);}catch(e){} }
+async function saveCloudContent(c){ try{const ref=doc(db,'users',currentUser.uid,'content',c.id); await setDoc(ref,c);}catch(e){} }
+async function removeCloudProduct(id){ try{await deleteDoc(doc(db,'users',currentUser.uid,'products',id));}catch(e){} }
+async function saveCloudBrand(){ try{await setDoc(doc(db,'users',currentUser.uid),{brand},{merge:true});}catch(e){} }
+
+
+// Replace this with the email that should have private admin access.
+// Also use the same email in firestore.rules before deploying the rules.
+const ADMIN_EMAIL = 'ekpoprecious18@gmail.com';
+const NEED_OPTIONS = [
+  'Creating content', 'Getting customers', 'Getting customers to buy',
+  'Managing customers', 'Keeping track of sales', 'Pricing products', 'Something else'
+];
+let selectedNeedHome='', selectedNeedFeedback='';
+
+function renderNeedChoices(){
+  const make=(id, selected, setter)=>{
+    const el=document.getElementById(id); if(!el)return;
+    el.innerHTML=NEED_OPTIONS.map(x=>`<button class="${selected===x?'selected':''}" onclick="selectNeed('${id}','${x.replace(/'/g,"\\'")}')">${x}</button>`).join('');
+  };
+  make('needsChoices',selectedNeedHome); make('needsChoices2',selectedNeedFeedback);
+}
+function selectNeed(id,value){
+  if(id==='needsChoices')selectedNeedHome=value; else selectedNeedFeedback=value;
+  renderNeedChoices();
+}
+async function saveFeedback(data){
+  if(!currentUser)return false;
+  try{
+    await addDoc(collection(db,'feedback'),{
+      ...data,userId:currentUser.uid,userEmail:currentUser.email||'',createdAt:new Date().toISOString()
+    });
+    return true;
+  }catch(e){ console.error(e); return false; }
+}
+async function submitNeedsFeedback(which=''){
+  const is2=which==='2'; const need=is2?selectedNeedFeedback:selectedNeedHome;
+  const other=(document.getElementById(is2?'needsOther2':'needsOther')?.value||'').trim();
+  if(!need && !other){alert('Please choose a challenge or tell us something else.');return;}
+  const ok=await saveFeedback({type:'business_need',need:need||'Something else',details:other}); if(ok) trackUsage('Feedback','business_need_submitted');
+  const st=document.getElementById(is2?'needsStatus2':'needsStatus');
+  st.textContent=ok?'Thank you! Your feedback helps us build SellEasy around real seller needs. 💜':'Could not send feedback. Please try again.';
+  if(ok){if(is2){selectedNeedFeedback='';document.getElementById('needsOther2').value='';}else{selectedNeedHome='';document.getElementById('needsOther').value='';}renderNeedChoices();}
+}
+async function submitGeneralFeedback(which=''){
+  const is2=which==='2'; const el=document.getElementById(is2?'generalFeedback2':'generalFeedback'); const text=(el.value||'').trim();
+  if(!text){alert('Please write your feedback first.');return;}
+  const ok=await saveFeedback({type:'general_suggestion',suggestion:text}); if(ok) trackUsage('Feedback','suggestion_submitted');
+  const st=document.getElementById(is2?'generalStatus2':'generalStatus'); st.textContent=ok?'Thank you! We saved your suggestion. 💜':'Could not send feedback. Please try again.'; if(ok)el.value='';
+}
+let pendingUsefulnessFeature='';
+function askUsefulness(feature){
+  pendingUsefulnessFeature=feature;
+  const answer=prompt(`Was the ${feature} useful?\nType: Yes, Not really, or Not at all`,'Yes');
+  if(answer)submitUsefulness(answer);
+}
+async function submitUsefulness(answer){
+  const normalized=answer.trim().toLowerCase();
+  let usefulness=normalized==='yes'?'Yes':(normalized==='not really'?'Not really':(normalized==='not at all'?'Not at all':''));
+  if(!usefulness){alert('Please enter Yes, Not really, or Not at all.');return;}
+  const ok=await saveFeedback({type:'feature_usefulness',feature:pendingUsefulnessFeature,usefulness});
+  if(ok)alert('Thanks! Your feedback helps us improve this feature. 💜');
+}
+function isAdmin(){return !!currentUser && (currentUser.email||'').toLowerCase()===ADMIN_EMAIL.toLowerCase() && !ADMIN_EMAIL.startsWith('YOUR_');}
+function setAdminVisibility(){
+  const showAdmin=isAdmin();
+  document.querySelectorAll('.admin-only').forEach(x=>x.style.display=showAdmin?'block':'none');
+  if(showAdmin){loadAdminDashboard();loadUserDashboard();}
+}
+
+async function loadUserDashboard(){
+  if(!isAdmin()) return;
+  const list=document.getElementById('userList');
+  try{
+    const snap=await getDocs(collection(db,'users'));
+    const users=[]; snap.forEach(d=>users.push({uid:d.id,...d.data()}));
+    document.getElementById('userTotal').textContent=users.length;
+    const now=Date.now(), fiveMin=now-24*60*60*1000, liveCut=now-2*60*1000;
+    const active=users.filter(u=>{
+      const t=Date.parse(u.lastActiveIso||''); return Number.isFinite(t)&&t>=fiveMin;
+    });
+    document.getElementById('userActive').textContent=active.length;
+    let live=0;
+    const presence=await getDocs(collection(db,'presence'));
+    presence.forEach(d=>{const x=d.data(); const t=Date.parse(x.lastSeenIso||''); if(Number.isFinite(t)&&t>=liveCut) live++;});
+    document.getElementById('userLive').textContent=live;
+    let savedTotal=0, productsTotal=0;
+    for(const u of users){
+      savedTotal += Number(u.savedCount||0); productsTotal += Number(u.productCount||0);
+    }
+    document.getElementById('adminSavedTotal').textContent=savedTotal;
+    document.getElementById('adminProductsTotal').textContent=productsTotal;
+    try{
+      const fb=await getDocs(collection(db,'feedback'));
+      document.getElementById('adminFeedbackTotal2').textContent=fb.size;
+    }catch(e){document.getElementById('adminFeedbackTotal2').textContent='—';}
+    const funnelSteps=['opened','signup','added_product','generated_content','saved_content','returned'];
+    const funnel=funnelSteps.map(step=>[step,users.filter(u=>u.funnel&&u.funnel[step]).length]);
+    document.getElementById('funnelBreakdown').innerHTML=funnel.map(([k,v])=>`<div class="row"><span>${esc(k.replaceAll('_',' '))}</span><b>${v}</b></div>`).join('');
+    users.sort((a,b)=>String(b.lastActiveIso||b.createdAt||'').localeCompare(String(a.lastActiveIso||a.createdAt||'')));
+    list.innerHTML=users.slice(0,100).map(u=>{
+      const last=u.lastActiveIso?new Date(u.lastActiveIso).toLocaleString():'Not yet';
+      const usage=u.usage||{};
+      const totalUsage=Object.values(usage).reduce((a,b)=>a+(Number(b)||0),0);
+      return `<div class="card"><b>${esc(u.name||'Unnamed user')}</b><div class="muted">${esc(u.email||'')} · Joined ${esc(u.createdAt?new Date(u.createdAt).toLocaleDateString():'—')}</div><p class="muted">Last active: ${esc(last)} · Sessions: ${Number(u.sessionCount||0)} · Tracked actions: ${totalUsage}</p><p class="muted">Products: ${Number(u.productCount||0)} · Saved content: ${Number(u.savedCount||0)}</p></div>`;
+    }).join('')||'<div class="card muted">No registered users yet.</div>';
+  }catch(e){
+    list.innerHTML='<div class="card">Could not load user data. Check your Firestore rules and admin email configuration.</div>';
+  }
+}
+async function loadAdminDashboard(){
+  if(!isAdmin())return;
+  const list=document.getElementById('adminFeedbackList');
+  try{
+    const snap=await getDocs(collection(db,'feedback'));
+    const rows=[]; snap.forEach(d=>rows.push({id:d.id,...d.data()})); rows.sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
+    const needs=rows.filter(x=>x.type==='business_need'); const suggestions=rows.filter(x=>x.type==='general_suggestion');
+    document.getElementById('adminTotal').textContent=rows.length;
+    document.getElementById('adminNeeds').textContent=needs.length;
+    document.getElementById('adminSuggestions').textContent=suggestions.length;
+    const counts={}; needs.forEach(x=>counts[x.need]=(counts[x.need]||0)+1);
+    document.getElementById('adminNeedsBreakdown').innerHTML=Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="row"><span>${esc(k)}</span><b>${v}</b></div>`).join('')||'No data yet.';
+    const useful=rows.filter(x=>x.type==='feature_usefulness'); const uc={}; useful.forEach(x=>{const k=x.feature||'Unknown';uc[k]??={};uc[k][x.usefulness]=(uc[k][x.usefulness]||0)+1});
+    document.getElementById('adminUsefulness').innerHTML=Object.entries(uc).map(([feature,c])=>`<div class="card"><b>${esc(feature)}</b><br>Yes: ${c.Yes||0} · Not really: ${c['Not really']||0} · Not at all: ${c['Not at all']||0}</div>`).join('')||'No data yet.';
+    list.innerHTML=rows.slice(0,100).map(x=>`<div class="card feedback-item"><span class="pill">${esc(x.type||'feedback')}</span><div class="muted">${esc(x.userEmail||'')} · ${esc(x.createdAt||'')}</div>${x.need?`<p><b>Need:</b> ${esc(x.need)}</p>`:''}${x.details?`<p><b>Details:</b> ${esc(x.details)}</p>`:''}${x.feature?`<p><b>Feature:</b> ${esc(x.feature)} · <b>Usefulness:</b> ${esc(x.usefulness)}</p>`:''}${x.suggestion?`<p><b>Suggestion:</b> ${esc(x.suggestion)}</p>`:''}</div>`).join('')||'<div class="card muted">No feedback yet.</div>';
+  }catch(e){list.innerHTML='<div class="card">Could not load admin data. Check your Firestore rules and admin email configuration.</div>';}
+}
+
+onAuthStateChanged(auth, async (user)=>{
+  currentUser=user;
+  const authScreen=document.getElementById('authScreen'); const appShell=document.getElementById('appShell');
+  if(user){
+    authScreen.style.display='none'; appShell.style.display='block';
+    document.getElementById('accountEmail').textContent=user.email || '';
+    await touchUserProfile(user,'app_open');
+    trackEvent('app_open');
+    trackFunnel('opened');
+    startPresence();
+    await loadCloudData();
+    renderNeedChoices();
+    setAdminVisibility();
+  }else{
+    dataReady=false; authScreen.style.display='flex'; appShell.style.display='none';
+    products=[];saved=[];brand={};
+  }
+});
+
+function show(id){if(id==='admin'&&!isAdmin())return;document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.s===id));if(id==='products')renderProducts();if(id==='content')renderContent();if(id==='marketing')renderMarketing();if(id==='admin')loadAdminDashboard();if(id==='users')loadUserDashboard();updateStats()}
+function updateStats(){productCount.textContent=products.length;contentCount.textContent=saved.length;renderPlan();productSelect.innerHTML='<option value="">Enter product details below</option>'+products.map((p,i)=>`<option value="${i}">${p.name}</option>`).join('')}
+async function addProduct(){let name=newProduct.value.trim();if(!name||!currentUser)return;const plan=getPlan();if(plan.productLimit!==Infinity && products.length>=plan.productLimit){alert('You’ve reached the Free plan limit of 10 saved products. Upgrade to Pro for unlimited saved products.');return;}const p={id:crypto.randomUUID(),name,price:newPrice.value,category:newCategory.value,details:newDetails.value};products.push(p);set(userKey('products'),products);await saveCloudProduct(p);trackUsage('Products','product_created');trackFunnel('added_product');newProduct.value=newPrice.value=newCategory.value=newDetails.value='';renderProducts();updateStats()}
+function renderProducts(){productsList.innerHTML=products.length?products.map((p,i)=>`<div class="card"><div class="row"><div><h3>${esc(p.name)}</h3><span class="pill">${esc(p.price||'No price')}</span><span class="pill">${esc(p.category||'General')}</span></div><button class="small secondary" onclick="useProduct(${i})">Create</button></div><p class="muted">${esc(p.details||'')}</p><button class="small" onclick="deleteProduct(${i})">Delete</button></div>`).join(''):'<div class="card muted">No products yet. Add your first product above.</div>'}
+async function deleteProduct(i){const id=products[i]?.id;products.splice(i,1);set(userKey('products'),products);if(id)await removeCloudProduct(id);renderProducts();updateStats()}
+function useProduct(i){show('create');productSelect.value=i;fillProduct()}
+function fillProduct(){let p=products[+productSelect.value];if(!p)return;pname.value=p.name;pdesc.value=p.details||'';price.value=p.price||''}
+const types={ 
+'Instagram caption':p=>`✨ ${p.name} is made for ${p.audience||'customers who want something useful and reliable'}.\n\n${p.desc||'A simple solution designed to make your day easier.'}\n\nPrice: ${p.price||'DM for price'}\n\nReady to order? Send a DM/message today. 💜`,
+'Facebook caption':p=>`Looking for ${p.name}? 💜\n\n${p.desc||'Here is a product worth checking out.'}\n\nPerfect for: ${p.audience||'our customers'}\nPrice: ${p.price||'DM for price'}\n\nMessage us to order or ask any questions.`,
+'WhatsApp sales message':p=>`Hi! 👋 If you're looking for ${p.name}, I think you'll love this.\n\n${p.desc||'It is practical, useful and made with your needs in mind.'}\n\nPrice: ${p.price||'DM for price'}\nIf you'd like to order, just reply here and I'll help you out. 💜`,
+'TikTok script':p=>`HOOK: “If you're looking for ${p.name}, stop scrolling for a second.”\n\nShow the product.\nExplain: ${p.desc||'briefly explain the main benefit and who it is for'}.\nMention the price: ${p.price||'DM for price'}.\nCTA: “Send me a message if you want yours.”`,
+'Advertisement copy':p=>`NEED ${p.name.toUpperCase()}?\n\n${p.desc||'A simple solution for your everyday needs.'}\n\nFor: ${p.audience||'customers who value quality'}\nPrice: ${p.price||'Contact us'}\n\nORDER NOW — message us today.`,
+'Product description':p=>`${p.name}: ${p.desc||'A thoughtfully selected product for customers looking for a practical solution.'}\n\nIdeal for: ${p.audience||'everyday customers'}\nPrice: ${p.price||'Contact for price'}`,
+'Customer follow-up':p=>`Hi! 💜 Just checking in about the ${p.name} you asked about. If you have any questions before deciding, feel free to ask. I'd be happy to help.`,
+'Product launch':p=>`🚨 NEW PRODUCT ALERT 🚨\n\nMeet ${p.name}!\n${p.desc||'Something new is here for our customers.'}\n\nPrice: ${p.price||'DM for price'}\n\nWant first dibs? Send a message today.`,
+'Discount announcement':p=>`🎉 SPECIAL OFFER 🎉\n\n${p.name} is now available at a special price. ${p.desc||''}\n\nDon't miss the offer. Message us to order while it lasts!`,
+'Business bio':p=>`${brand.biz||'Your Business'} | Helping ${p.audience||brand.bizaudience||'customers'} with quality products. ${p.desc||brand.bizdesc||'Simple products, helpful service and easy ordering.'}`
+};
+async function generate(){
+  if(!canUseAI())return;
+  const payload={productName:pname.value||'Your product',description:pdesc.value||'',price:price.value||'',audience:audience.value||'',contentType:ctype.value,style:style.value,brand:brand||{}};
+  const btn=document.querySelector('#create .card button[onclick="generate()"]');
+  if(btn){btn.disabled=true;btn.textContent='Generating…';}
+  try{
+    const res=await fetch(GENERATE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok || !data.text) throw new Error(data.error||`AI request failed (${res.status})`);
+    lastGenerated=data.text; aiUsed+=1; usageMonth=currentMonth();
+    output.textContent=lastGenerated; generated.style.display='block'; renderPlan(); await persistPlan();
+    trackUsage('AI Content Studio','content_generated'); trackFunnel('generated_content'); setTimeout(()=>askUsefulness('AI Content Studio'),150);
+  }catch(err){
+    console.error(err);
+    alert('SellEasy could not generate the content right now. Please check your internet connection and try again.');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Generate';}
+  }
+}
+async function saveContent(){if(!lastGenerated||!currentUser)return;const plan=getPlan();if(plan.savedLimit!==Infinity && saved.length>=plan.savedLimit){alert('You’ve reached the Free plan limit of 20 saved content pieces. Upgrade to Pro for unlimited saved content.');return;}const c={id:crypto.randomUUID(),type:ctype.value,text:lastGenerated,date:new Date().toLocaleString()};saved.unshift(c);set(userKey('saved'),saved);await saveCloudContent(c);trackUsage('My Content','content_saved');trackFunnel('saved_content');updateStats();alert('Saved to My Content 💜')}
+function renderContent(){let q=(searchContent.value||'').toLowerCase();let a=saved.filter(x=>x.text.toLowerCase().includes(q)||x.type.toLowerCase().includes(q));contentList.innerHTML=a.length?a.map((x,i)=>`<div class="card"><span class="pill">${esc(x.type)}</span><p class="contentbox">${esc(x.text)}</p><small class="muted">${esc(x.date)}</small><br><button class="small secondary" onclick="navigator.clipboard.writeText(${JSON.stringify(x.text)})">Copy</button></div>`).join(''):'<div class="card muted">Nothing saved yet.</div>'}
+function renderMarketing(){let ideas=['Product spotlight','Customer problem + solution','Behind the scenes','FAQ post','Customer testimonial','Before/after story','Educational tip','Limited-stock announcement','Weekend promotion','Common mistake your customers make'];document.getElementById('ideas').innerHTML=ideas.map(x=>`<button class="secondary small" onclick="ideaUse('${x}')">${x}</button>`).join('');let days=['Introduce your product','Teach something useful','Talk about a customer problem','Show product benefits','Share a testimonial','Behind the scenes','Direct sales post'];planner.innerHTML=days.map((x,i)=>`<div class="card"><b>Day ${i+1}:</b> ${x}<br><button class="small secondary" onclick="ideaUse('${x}')">Create content</button></div>`).join('')}
+function ideaUse(x){show('create');pdesc.value=x;pname.focus()}
+function reply(){let m=customerMsg.value.toLowerCase();let r=m.includes('price')||m.includes('expensive')?'I understand 💜. I can help you with the details and available options. Let me know what works best for you.':m.includes('deliver')?'Yes, we can discuss delivery options based on your location. Send me your location and I’ll help you with the details.':m.includes('available')?'Yes, it is currently available. 💜 Would you like me to help you place the order?':m.includes('later')?'No problem at all. Take your time, and feel free to message me whenever you’re ready. 💜':'Thanks for reaching out! 💜 I’d be happy to help. Could you tell me a little more about what you need?';replyOut.textContent=r;replyBox.style.display='block';trackUsage('Customer Reply Assistant','reply_generated');setTimeout(()=>askUsefulness('Customer Reply Assistant'),150)}
+function calcProfit(){profitOut.textContent=Number(sell.value||0)-Number(cost.value||0)}
+function calcDiscount(){discountOut.textContent=(Number(dprice.value||0)*(1-Number(dpercent.value||0)/100)).toFixed(2)}
+function calcMarkup(){markupOut.textContent=(Number(mcost.value||0)*(1+Number(mpercent.value||0)/100)).toFixed(2)}
+function calcBreak(){let c=Number(unitprice.value)-Number(unitcost.value);breakOut.textContent=c>0?Math.ceil(Number(fixed.value||0)/c):'—'}
+async function saveBrand(){brand={biz:biz.value,bizdesc:bizdesc.value,bizaudience:bizaudience.value,tone:tone.value,contact:contact.value};set(userKey('brand'),brand);await saveCloudBrand();brandSaved.textContent='Brand Kit saved to your account 💜';trackUsage('Brand Kit','brand_saved')}
+function loadBrand(){biz.value=brand.biz||'';bizdesc.value=brand.bizdesc||'';bizaudience.value=brand.bizaudience||'';tone.value=brand.tone||'Professional';contact.value=brand.contact||''}
+function copyGenerated(){navigator.clipboard.writeText(lastGenerated);alert('Copied!')}
+function copyText(id){navigator.clipboard.writeText(document.getElementById(id).textContent);alert('Copied!')}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+// App data is loaded after Firebase confirms the signed-in user.
+
+Object.assign(window,{show,switchAuth,loginUser,signupUser,resetPassword,logoutUser,addProduct,deleteProduct,useProduct,fillProduct,generate,saveContent,renderContent,renderProducts,renderMarketing,ideaUse,reply,calcProfit,calcDiscount,calcMarkup,calcBreak,saveBrand,copyGenerated,copyText,selectNeed,submitNeedsFeedback,submitGeneralFeedback,submitUsefulness,loadAdminDashboard,loadUserDashboard});
+</script>
+</body></html>

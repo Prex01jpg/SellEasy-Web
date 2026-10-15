@@ -1,0 +1,36 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email == 'ekpoprecious18@gmail.com';
+    }
+
+    match /users/{userId} {
+      allow read, write: if request.auth != null
+                          && request.auth.uid == userId;
+      allow read: if isAdmin();
+      match /{document=**} {
+        allow read, write: if request.auth != null
+                            && request.auth.uid == userId;
+      }
+    }
+
+    match /feedback/{feedbackId} {
+      allow create: if request.auth != null
+                    && request.resource.data.userId == request.auth.uid;
+      allow read: if isAdmin();
+      allow update, delete: if isAdmin();
+    }
+
+    match /presence/{userId} {
+      allow create, update: if request.auth != null
+                            && request.auth.uid == userId;
+      allow read: if isAdmin();
+      allow delete: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}

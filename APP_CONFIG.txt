@@ -1,0 +1,5 @@
+SellEasy latest frontend configuration
+Backend: https://selleasy-ai-backend.onrender.com
+AI endpoint: https://selleasy-ai-backend.onrender.com/api/generate
+Firebase project: selleasy-c9182
+Ads: postponed / disabled

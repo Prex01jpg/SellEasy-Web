@@ -1,0 +1,45 @@
+SellEasy — User + Analytics + Feedback Admin Update
+
+ADMIN EMAIL
+SellEasy admin account: ekpoprecious18@gmail.com
+
+WHAT THIS UPDATE ADDS
+1. Firebase Email/Password authentication and user-specific cloud data.
+2. Firebase Analytics events for app usage.
+3. Admin User & Analytics dashboard:
+   - registered users
+   - users active in the last 24 hours
+   - signed-in users with a heartbeat in the last 2 minutes ("Live now")
+   - product/content totals
+   - user journey/funnel progress
+   - recent registered users and last-active time
+   - tracked feature-action counts
+4. Privacy-conscious presence tracking: only a recent signed-in heartbeat is used for the
+   "Live now" estimate. No location tracking is included.
+5. Feedback surveys and suggestions stored in Firestore.
+6. Private feedback dashboard with business-need and feature-usefulness breakdowns.
+7. Admin-only Firestore reads for users, feedback, and presence.
+
+FIRESTORE RULES
+Use the included firestore.rules in Firebase Console > Firestore Database > Rules,
+then Publish.
+
+IMPORTANT
+- The admin email is configured as ekpoprecious18@gmail.com.
+- The admin account should have email verification enabled before using admin views.
+- Never put the Gemini API key in this frontend.
+- Firebase web config is client-side configuration; Firestore Security Rules protect data.
+- Firebase Analytics is for usage analytics; it is not a secret identity tracker.
+- Tell users in your privacy notice that SellEasy uses analytics/usage information to
+  improve the app.
+- "Live now" is an approximate session indicator based on a 60-second heartbeat and
+  a 2-minute freshness window.
+
+
+LATEST APP UPDATE
+- Real Gemini AI generation is connected through the deployed SellEasy backend: https://selleasy-ai-backend.onrender.com
+- The Gemini API key stays on the backend and is never placed in this frontend.
+- Free/Pro plan limits are included: Free = 20 AI generations/month, 10 products, 20 saved content; Pro = ₦2,000/month, 100 AI generations/month, unlimited products/content.
+- My Plan UI includes remaining AI generations and an Upgrade button. Secure payment verification is NOT connected yet; the upgrade button is a placeholder until a payment processor is connected.
+- Advertising is intentionally postponed and is NOT included in this version.
+- This package is intended to be served from HTTPS/HTTP (for example GitHub Pages), not opened directly as a file:// page.
