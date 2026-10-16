@@ -629,6 +629,6 @@ function copyText(id){navigator.clipboard.writeText(document.getElementById(id).
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 // App data is loaded after Firebase confirms the signed-in user.
 
-Object.assign(window,{show,switchAuth,loginUser,signupUser,resetPassword,logoutUser,addProduct,deleteProduct,useProduct,fillProduct,generate,saveContent,renderContent,renderProducts,renderMarketing,ideaUse,reply,calcProfit,calcDiscount,calcMarkup,calcBreak,saveBrand,copyGenerated,copyText,selectNeed,submitNeedsFeedback,submitGeneralFeedback,submitUsefulness,loadAdminDashboard,loadUserDashboard});
+Object.assign(window,{show,switchAuth,loginUser,signupUser,resetPassword,logoutUser,addProduct,deleteProduct,useProduct,fillProduct,generate,saveContent,renderContent,renderProducts,renderMarketing,ideaUse,reply,calcProfit,calcDiscount,calcMarkup,calcBreak,saveBrand,copyGenerated,copyText,selectNeed,submitNeedsFeedback,submitGeneralFeedback,submitUsefulness,loadAdminDashboard,loadUserDashboard,startMonthlySubscription});
 </script>
 </body></html>
