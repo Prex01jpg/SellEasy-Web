@@ -290,6 +290,7 @@ async function startMonthlySubscription(){
     alert('Sorry, we could not start the Pro subscription. Please try again.');
   }
 }
+ window.startMonthlySubscription = startMonthlySubscription; 
 function canUseAI(){const plan=getPlan();if(aiUsed>=plan.aiLimit){alert(`🎉 You’ve used all ${plan.aiLimit} AI generations for this month! Upgrade to SellEasy Pro for 100 AI generations every month plus unlimited saved content and advanced tools.`);return false;}return true}
 
 
