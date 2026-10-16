@@ -179,7 +179,7 @@ textarea{min-height:105px;resize:vertical}.pill{display:inline-block;background:
     <div><div class="muted">Saved content</div><div class="stat" id="profileContentRemaining">0/20</div></div>
   </div>
   <div id="upgradeBox" class="notice" style="margin-top:12px">✨ Want more? Upgrade to Pro for <b>100 AI generations every month</b>, unlimited saved products/content and advanced tools.</div>
-  <button id="upgradeButton" onclick="showUpgradeMessage()">Upgrade to Pro — ₦2,000/month</button><button id="managePlanButton" class="secondary" style="display:none;margin-top:8px" onclick="alert('Subscription management will appear here after the secure payment processor is connected.')">Manage Subscription</button>
+<button id="upgradeButton" onclick="startMonthlySubscription()">Upgrade to Pro — ₦2,000/month</button>  <button id="managePlanButton" class="secondary" style="display:none;margin-top:8px" onclick="alert('Subscription management will appear here after the secure payment processor is connected.')">Manage Subscription</button>
 </div>
 <h2 style="margin-top:18px">Brand Kit</h2><div class="card">
 <label>Business name</label><input id="biz" placeholder="Your business name">
@@ -262,7 +262,34 @@ const scr=document.getElementById('profileContentRemaining');if(scr)scr.textCont
 const box=document.getElementById('upgradeBox');if(box)box.style.display=accountPlan==='pro'?'none':'block';
 const btn=document.getElementById('upgradeButton');if(btn)btn.style.display=accountPlan==='pro'?'none':'block';const mb=document.getElementById('managePlanButton');if(mb)mb.style.display=accountPlan==='pro'?'block':'none';}
 async function persistPlan(){if(!currentUser)return;try{await setDoc(doc(db,'users',currentUser.uid),{plan:accountPlan,aiUsed,aiUsageMonth:usageMonth},{merge:true});}catch(e){console.error(e)}}
-function showUpgradeMessage(){alert('SellEasy Pro will be available here when the secure payment system is connected. Pro: ₦2,000/month · 100 AI generations/month · unlimited saved products and content.')}
+async function startMonthlySubscription(){
+  if(!currentUser){
+    alert('Please log in first.');
+    return;
+  }
+
+  try{
+    const response = await fetch(`${BACKEND_URL}/api/paystack/initialize`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        email:currentUser.email,
+        planCode:'PLN_m90y64j9s6by4z7'
+      })
+    });
+
+    const data = await response.json();
+
+    if(!response.ok || !data.authorization_url){
+      throw new Error(data.error || 'Unable to start subscription.');
+    }
+
+    window.location.href = data.authorization_url;
+  }catch(error){
+    console.error(error);
+    alert('Sorry, we could not start the Pro subscription. Please try again.');
+  }
+}
 function canUseAI(){const plan=getPlan();if(aiUsed>=plan.aiLimit){alert(`🎉 You’ve used all ${plan.aiLimit} AI generations for this month! Upgrade to SellEasy Pro for 100 AI generations every month plus unlimited saved content and advanced tools.`);return false;}return true}
 
 
